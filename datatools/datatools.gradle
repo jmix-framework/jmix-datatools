@@ -18,23 +18,11 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.datatools'
-archivesBaseName = 'jmix-datatools-ui'
+archivesBaseName = 'jmix-datatools'
 
 dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
-    api project(':datatools')
     api 'io.jmix.core:jmix-core'
     api 'io.jmix.data:jmix-data'
-    api 'io.jmix.ui:jmix-ui'
-
-    testImplementation 'org.springframework:spring-test'
-    testImplementation 'org.spockframework:spock-core'
-    testImplementation 'org.spockframework:spock-spring'
-    testImplementation 'org.apache.commons:commons-dbcp2'
-    testImplementation 'org.springframework:spring-orm'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
-    testRuntimeOnly 'org.slf4j:slf4j-simple'
 }
