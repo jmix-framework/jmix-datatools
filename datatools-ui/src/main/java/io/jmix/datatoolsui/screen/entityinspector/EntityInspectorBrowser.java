@@ -68,7 +68,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     public static final int MAX_TEXT_LENGTH = 50;
 
     private static final String BASE_SELECT_QUERY = "select e from %s e";
-    private static final String DELETED_ONLY_SELECT_QUERY = "select e from %s e where e.deletedDate is not null";
+    private static final String DELETED_ONLY_SELECT_QUERY = "select e from %s e where e.%s is not null";
     private static final String RESTORE_ACTION_ID = "restore";
 
     protected static final Logger log = LoggerFactory.getLogger(EntityInspectorBrowser.class);
@@ -146,7 +146,6 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
 
     @Subscribe
     public void onInit(InitEvent event) {
-        showMode.setOptionsEnum(ShowMode.class);
         showMode.setValue(ShowMode.NON_REMOVED);
     }
 
@@ -276,8 +275,18 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                 entitiesDl.setQuery(String.format(BASE_SELECT_QUERY, meta.getName()));
                 break;
             case REMOVED:
-                entitiesDl.setSoftDeletion(false);
-                entitiesDl.setQuery(String.format(DELETED_ONLY_SELECT_QUERY, meta.getName()));
+                if(metadataTools.isSoftDeletable(meta.getJavaClass())) {
+                    entitiesDl.setSoftDeletion(false);
+                    entitiesDl.setQuery(
+                            String.format(
+                                    DELETED_ONLY_SELECT_QUERY,
+                                    meta.getName(),
+                                    metadataTools.findDeletedDateProperty(meta.getJavaClass())
+                            )
+                    );
+                } else {
+                    entitiesDl.setLoadDelegate(loadContext -> Collections.emptyList());
+                }
                 break;
             default:
         }
