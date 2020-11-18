@@ -63,13 +63,13 @@ public class EntityRestoreImpl implements EntityRestore {
                 continue;
             }
 
-            restoreEntity(entity, storeName, saveContext);
+            restoreEntity(entity, saveContext);
         }
         dataManager.save(saveContext);
         return saveContext.getEntitiesToSave().size();
     }
 
-    protected void restoreEntity(Entity entity, String storeName, SaveContext saveContext) {
+    protected void restoreEntity(Entity entity, SaveContext saveContext) {
         Optional<Entity> reloadedEntityOpt = dataManager.load(Id.of(entity)).softDeletion(false).optional();
         if (reloadedEntityOpt.isPresent() && EntityValues.isSoftDeleted(reloadedEntityOpt.get())) {
             Entity reloadedEntity = reloadedEntityOpt.get();
@@ -78,7 +78,7 @@ public class EntityRestoreImpl implements EntityRestore {
             EntityValues.setDeletedDate(reloadedEntity, null);
             EntityValues.setDeletedBy(reloadedEntity, null);
             saveContext.saving(reloadedEntity);
-            RestorationContext restorationContext = new RestorationContext(entity, storeName, deleteTs, saveContext);
+            RestorationContext restorationContext = new RestorationContext(entity, deleteTs, saveContext);
             restoreDetails(restorationContext);
         }
     }
@@ -105,10 +105,6 @@ public class EntityRestoreImpl implements EntityRestore {
     private void processOnDeleteCascadeProperty(MetaClass metaClass, MetaProperty property, RestorationContext restorationContext) {
         MetaClass detailMetaClass = property.getRange().asClass();
         log.trace("Process OnDelete Cascade property {}. Meta Classes: {} -> {}", property, metaClass, detailMetaClass);
-        if (!restorationContext.getStoreName().equals(metadataTools.getStoreName(detailMetaClass))) {
-            log.debug("Cannot restore {} because it is from different data store", detailMetaClass);
-            return;
-        }
         if (!metadataTools.isSoftDeletable(detailMetaClass.getJavaClass())) {
             log.debug("Cannot restore {} because it is hard deleted", detailMetaClass);
             return;
@@ -129,10 +125,10 @@ public class EntityRestoreImpl implements EntityRestore {
         log.trace("Process owning side property {}", property);
         Object value = EntityValues.getValue(restorationContext.getEntity(), property.getName());
         if (value instanceof Entity) {
-            restoreEntity((Entity) value, restorationContext.getStoreName(), restorationContext.getSaveContext());
+            restoreEntity((Entity) value, restorationContext.getSaveContext());
         } else if (value instanceof Collection) {
             for (Object detailEntity : (Collection<?>) value) {
-                restoreEntity((Entity) detailEntity, restorationContext.getStoreName(), restorationContext.getSaveContext());
+                restoreEntity((Entity) detailEntity, restorationContext.getSaveContext());
             }
         }
     }
@@ -153,7 +149,7 @@ public class EntityRestoreImpl implements EntityRestore {
         List<Entity> entities = dataManager.loadList(loadContext);
         for (Entity detailEntity : entities) {
             if (metadataTools.isSoftDeletable(restorationContext.getEntityClass())) {
-                restoreEntity(detailEntity, restorationContext.getStoreName(), restorationContext.getSaveContext());
+                restoreEntity(detailEntity, restorationContext.getSaveContext());
             }
         }
     }
@@ -192,10 +188,6 @@ public class EntityRestoreImpl implements EntityRestore {
         if(entityId == null) {
             throw new IllegalStateException("EntityId is null");
         }
-        if (!restorationContext.getStoreName().equals(metadataTools.getStoreName(detailMetaClass))) {
-            log.debug("Cannot restore {} because it is from different data store", property.getRange().asClass());
-            return;
-        }
         if (!metadataTools.isSoftDeletable(detailMetaClass.getJavaClass())) {
             log.debug("Cannot restore {} because it is hard deleted", property.getRange().asClass());
             return;
@@ -213,7 +205,7 @@ public class EntityRestoreImpl implements EntityRestore {
 
             for (Entity detailEntity : entities) {
                 if (metadataTools.isSoftDeletable(restorationContext.getEntityClass())) {
-                    restoreEntity(detailEntity, restorationContext.getStoreName(), restorationContext.getSaveContext());
+                    restoreEntity(detailEntity, restorationContext.getSaveContext());
                 }
             }
         }
@@ -252,13 +244,11 @@ public class EntityRestoreImpl implements EntityRestore {
 
     private static class RestorationContext {
         private final Entity entity;
-        private final String storeName;
         private final Date deleteTs;
         private final SaveContext saveContext;
 
-        public RestorationContext(Entity entity, String storeName, Date deleteTs, SaveContext saveContext) {
+        public RestorationContext(Entity entity, Date deleteTs, SaveContext saveContext) {
             this.entity = entity;
-            this.storeName = storeName;
             this.deleteTs = deleteTs;
             this.saveContext = saveContext;
         }
@@ -273,10 +263,6 @@ public class EntityRestoreImpl implements EntityRestore {
 
         public Class<? extends Entity> getEntityClass() {
             return entity.getClass();
-        }
-
-        public String getStoreName() {
-            return storeName;
         }
 
         public Date getDeleteTs() {
