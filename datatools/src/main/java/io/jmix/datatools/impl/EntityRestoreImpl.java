@@ -57,9 +57,8 @@ public class EntityRestoreImpl implements EntityRestore {
                 continue;
             }
 
-            String storeName = metadataTools.getStoreName(metadata.getClass(entity.getClass()));
-            if (storeName == null) {
-                log.warn("Unable to restore entity {}: cannot determine data store", entity);
+            if(!metadataTools.isPersistent(entity.getClass())) {
+                log.warn("Unable to restore non-persistent entity {}", entity);
                 continue;
             }
 
