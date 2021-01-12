@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import javax.persistence.Id;
 import java.util.UUID;
 
-@JmixEntity(name = "ui_InfoParam")
+@JmixEntity(name = "datatools_InfoParam")
 @SystemLevel
 public class InfoParam {
 

@@ -44,7 +44,7 @@ import static io.jmix.core.entity.EntityValues.getValueEx;
 import static java.lang.String.format;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
-@Component("data_EntitySqlGenerator")
+@Component("datatools_EntitySqlGenerator")
 @Scope(SCOPE_PROTOTYPE)
 public class EntitySqlGenerator {
 

@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Primary
-@Component("data_EntitySqlGenerationService")
+@Component("datatools_EntitySqlGenerationService")
 public class EntitySqlGenerationServiceImpl implements EntitySqlGenerationService {
 
     @Autowired

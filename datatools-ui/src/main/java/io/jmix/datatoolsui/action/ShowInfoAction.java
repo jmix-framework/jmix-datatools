@@ -15,7 +15,9 @@
  */
 package io.jmix.datatoolsui.action;
 
+import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
+import io.jmix.datatoolsui.accesscontext.UiShowEntityInfoContext;
 import io.jmix.datatoolsui.screen.systeminfo.SystemInfoWindow;
 import io.jmix.ui.Screens;
 import io.jmix.ui.action.Action;
@@ -33,6 +35,8 @@ public class ShowInfoAction extends SecuredListAction implements Action.Executab
 
     public static final String ID = "showSystemInfo";
 
+    protected boolean visibleBySpecificUiPermission = true;
+
     public ShowInfoAction() {
         this(ID);
     }
@@ -44,6 +48,23 @@ public class ShowInfoAction extends SecuredListAction implements Action.Executab
     @Autowired
     public void setMessages(Messages messages) {
         setCaption(messages.getMessage("table.showInfoAction"));
+    }
+
+    @Autowired
+    @Override
+    protected void setAccessManager(AccessManager accessManager) {
+        super.setAccessManager(accessManager);
+
+        UiShowEntityInfoContext context = new UiShowEntityInfoContext();
+        accessManager.applyRegisteredConstraints(context);
+
+        visibleBySpecificUiPermission = context.isPermitted();
+    }
+
+    @Override
+    public boolean isVisibleByUiPermissions() {
+        return visibleBySpecificUiPermission
+                && super.isVisibleByUiPermissions();
     }
 
     @Override
