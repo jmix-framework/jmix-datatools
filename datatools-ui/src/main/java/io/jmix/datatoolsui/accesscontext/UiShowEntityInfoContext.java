@@ -19,7 +19,7 @@ package io.jmix.datatoolsui.accesscontext;
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
 public class UiShowEntityInfoContext extends SpecificOperationAccessContext {
-    public static final String NAME = "cuba.gui.showInfo";
+    public static final String NAME = "datatools.ui.showEntityInfo";
 
     public UiShowEntityInfoContext() {
         super(NAME);

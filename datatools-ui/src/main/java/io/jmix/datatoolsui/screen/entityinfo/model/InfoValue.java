@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.datatoolsui.screen.systeminfo.model;
+package io.jmix.datatoolsui.screen.entityinfo.model;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -23,9 +23,9 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import javax.persistence.Id;
 import java.util.UUID;
 
-@JmixEntity(name = "datatools_InfoParam")
+@JmixEntity(name = "datatools_InfoValue")
 @SystemLevel
-public class InfoParam {
+public class InfoValue {
 
     @JmixGeneratedValue
     @Id

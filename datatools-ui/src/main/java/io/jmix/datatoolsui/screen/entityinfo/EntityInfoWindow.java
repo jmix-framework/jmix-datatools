@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.datatoolsui.screen.systeminfo;
+package io.jmix.datatoolsui.screen.entityinfo;
 
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.datatools.EntitySqlGenerationService;
 import io.jmix.datatoolsui.DatatoolsUiProperties;
-import io.jmix.datatoolsui.screen.systeminfo.model.InfoParam;
+import io.jmix.datatoolsui.screen.entityinfo.model.InfoValue;
 import io.jmix.ui.Facets;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Notifications.NotificationType;
@@ -38,21 +38,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-@UiController("sysInfoWindow")
-@UiDescriptor("system-info-window.xml")
-public class SystemInfoWindow extends Screen {
+@UiController("entityInfoWindow")
+@UiDescriptor("entity-info-window.xml")
+public class EntityInfoWindow extends Screen {
 
     protected static final String TIMESTAMP_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     @Autowired
-    protected Table<InfoParam> infoTable;
+    protected Table<InfoValue> infoTable;
     @Autowired
     protected TextArea<String> scriptArea;
     @Autowired
     protected HBoxLayout buttonsPanel;
 
     @Autowired
-    protected CollectionContainer<InfoParam> paramsDc;
+    protected CollectionContainer<InfoValue> infoDc;
 
     @Autowired
     protected Metadata metadata;
@@ -108,8 +108,8 @@ public class SystemInfoWindow extends Screen {
     protected void onCopy(ClipboardTrigger.CopyEvent copyEvent) {
         notifications.create()
                 .withCaption(messageBundle.getMessage(copyEvent.isSuccess()
-                        ? "systemInfoWindow.copingSuccessful"
-                        : "systemInfoWindow.copingFailed"))
+                        ? "entityInfoWindow.copingSuccessful"
+                        : "entityInfoWindow.copingFailed"))
                 .withType(NotificationType.TRAY)
                 .show();
     }
@@ -132,7 +132,7 @@ public class SystemInfoWindow extends Screen {
         DatatoolsUiProperties uiProperties = getApplicationContext().getBean(DatatoolsUiProperties.class);
 
         if (sqlGenerationService == null
-                || !uiProperties.isSystemInfoScriptsEnabled()
+                || !uiProperties.isEntityInfoScriptsEnabled()
                 || !metadataTools.isPersistent(entity.getClass())) {
             buttonsPanel.setVisible(false);
         }
@@ -148,62 +148,62 @@ public class SystemInfoWindow extends Screen {
 
         MetaClass metaClass = metadata.getClass(entity);
 
-        List<InfoParam> items = new ArrayList<>();
-        items.add(createItem("systemInfo.entityName", metaClass.getName()));
+        List<InfoValue> items = new ArrayList<>();
+        items.add(createItem("entityInfo.entityName", metaClass.getName()));
 
         Class<?> javaClass = metaClass.getJavaClass();
-        items.add(createItem("systemInfo.entityClass", javaClass.getName()));
+        items.add(createItem("entityInfo.entityClass", javaClass.getName()));
 
         if ((metadataTools.isEmbeddable(metaClass) || metadataTools.isPersistent(metaClass))
                 && isNewEntity) {
-            items.add(createItem("systemInfo.state",
-                    messageBundle.getMessage("systemInfo.isNew")));
+            items.add(createItem("entityInfo.state",
+                    messageBundle.getMessage("entityInfo.isNew")));
         }
 
         if (metadataTools.isEmbeddable(metaClass)) {
-            items.add(createItem("systemInfo.specificInstance",
-                    messageBundle.getMessage("systemInfo.embeddableInstance")));
+            items.add(createItem("entityInfo.specificInstance",
+                    messageBundle.getMessage("entityInfo.embeddableInstance")));
         } else if (!metadataTools.isPersistent(metaClass)) {
-            items.add(createItem("systemInfo.specificInstance",
-                    messageBundle.getMessage("systemInfo.nonPersistentInstance")));
+            items.add(createItem("entityInfo.specificInstance",
+                    messageBundle.getMessage("entityInfo.nonPersistentInstance")));
         }
 
-        addItem(items, metadataTools.getDatabaseTable(metaClass), "systemInfo.entityTable");
-        addItem(items, EntityValues.getId(entity), "systemInfo.id");
-        addItem(items, EntityValues.getVersion(entity), "systemInfo.version");
+        addItem(items, metadataTools.getDatabaseTable(metaClass), "entityInfo.entityTable");
+        addItem(items, EntityValues.getId(entity), "entityInfo.id");
+        addItem(items, EntityValues.getVersion(entity), "entityInfo.version");
 
         SimpleDateFormat df = new SimpleDateFormat(TIMESTAMP_DATE_FORMAT);
         if (EntityValues.isAuditSupported(entity)) {
-            addItem(items, entity, "createdDate", "systemInfo.createdDate", df::format);
-            addItem(items, entity, "createdBy", "systemInfo.createdBy");
+            addItem(items, entity, "createdDate", "entityInfo.createdDate", df::format);
+            addItem(items, entity, "createdBy", "entityInfo.createdBy");
 
-            addItem(items, entity, "lastModifiedDate", "systemInfo.lastModifiedDate", df::format);
-            addItem(items, entity, "lastModifiedBy", "systemInfo.lastModifiedBy");
+            addItem(items, entity, "lastModifiedDate", "entityInfo.lastModifiedDate", df::format);
+            addItem(items, entity, "lastModifiedBy", "entityInfo.lastModifiedBy");
         }
 
         if (EntityValues.isSoftDeleted(entity)) {
-            addItem(items, entity, "deletedDate", "systemInfo.deletedDate", df::format);
-            addItem(items, entity, "deletedBy", "systemInfo.deletedBy");
+            addItem(items, entity, "deletedDate", "entityInfo.deletedDate", df::format);
+            addItem(items, entity, "deletedBy", "entityInfo.deletedBy");
         }
 
-        paramsDc.setItems(items);
+        infoDc.setItems(items);
     }
 
-    protected void addItem(List<InfoParam> items, Object entity, String param, String messageKey) {
+    protected void addItem(List<InfoValue> items, Object entity, String param, String messageKey) {
         addItem(items, entity, param, messageKey, null);
     }
 
-    protected void addItem(List<InfoParam> items, Object entity, String param, String messageKey,
+    protected void addItem(List<InfoValue> items, Object entity, String param, String messageKey,
                            @Nullable Function<Object, String> formatter) {
         Object value = EntityValues.getValue(entity, param);
         addItem(items, value, messageKey, formatter);
     }
 
-    protected void addItem(List<InfoParam> items, Object value, String messageKey) {
+    protected void addItem(List<InfoValue> items, Object value, String messageKey) {
         addItem(items, value, messageKey, (Function<Object, String>) null);
     }
 
-    protected void addItem(List<InfoParam> items, Object value, String messageKey,
+    protected void addItem(List<InfoValue> items, Object value, String messageKey,
                            @Nullable Function<Object, String> formatter) {
         if (value != null) {
             items.add(createItem(messageKey, formatter != null
@@ -230,8 +230,8 @@ public class SystemInfoWindow extends Screen {
                 .one();
     }
 
-    protected InfoParam createItem(String messageKey, Object value) {
-        InfoParam item = metadata.create(InfoParam.class);
+    protected InfoValue createItem(String messageKey, Object value) {
+        InfoValue item = metadata.create(InfoValue.class);
         item.setKey(messageBundle.getMessage(messageKey));
         item.setValue(metadataTools.format(value));
 

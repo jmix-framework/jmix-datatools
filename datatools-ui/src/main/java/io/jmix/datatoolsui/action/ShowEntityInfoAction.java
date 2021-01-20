@@ -18,7 +18,7 @@ package io.jmix.datatoolsui.action;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.datatoolsui.accesscontext.UiShowEntityInfoContext;
-import io.jmix.datatoolsui.screen.systeminfo.SystemInfoWindow;
+import io.jmix.datatoolsui.screen.entityinfo.EntityInfoWindow;
 import io.jmix.ui.Screens;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
@@ -30,24 +30,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @StudioAction(category = "List Actions",
         description = "Displays a dialog window with detailed information about the selected entity")
-@ActionType(ShowInfoAction.ID)
-public class ShowInfoAction extends SecuredListAction implements Action.ExecutableAction {
+@ActionType(ShowEntityInfoAction.ID)
+public class ShowEntityInfoAction extends SecuredListAction implements Action.ExecutableAction {
 
-    public static final String ID = "showSystemInfo";
+    public static final String ID = "showEntityInfo";
 
     protected boolean visibleBySpecificUiPermission = true;
 
-    public ShowInfoAction() {
+    public ShowEntityInfoAction() {
         this(ID);
     }
 
-    public ShowInfoAction(String id) {
+    public ShowEntityInfoAction(String id) {
         super(id);
     }
 
     @Autowired
     public void setMessages(Messages messages) {
-        setCaption(messages.getMessage("table.showInfoAction"));
+        setCaption(messages.getMessage(ShowEntityInfoAction.class, "showEntityInfoAction.caption"));
     }
 
     @Autowired
@@ -80,7 +80,7 @@ public class ShowInfoAction extends SecuredListAction implements Action.Executab
     @Override
     public void execute() {
         if (target == null) {
-            throw new IllegalStateException("ShowInfoAction target is not set");
+            throw new IllegalStateException("Target is not set");
         }
 
         Object selectedItem = target.getSingleSelected();
@@ -93,7 +93,7 @@ public class ShowInfoAction extends SecuredListAction implements Action.Executab
         Screens screens = ComponentsHelper.getScreenContext(component)
                 .getScreens();
 
-        SystemInfoWindow screen = screens.create(SystemInfoWindow.class);
+        EntityInfoWindow screen = screens.create(EntityInfoWindow.class);
         screen.setEntity(entity);
 
         screen.show();

@@ -15,18 +15,18 @@
   -->
 
 <window xmlns="http://jmix.io/schema/ui/window"
-        caption="msg://systemInfoWindow.caption"
+        caption="msg://entityInfoWindow.caption"
         focusComponent="infoTable">
     <data>
-        <collection id="paramsDc"
-                    class="io.jmix.datatoolsui.screen.systeminfo.model.InfoParam"/>
+        <collection id="infoDc"
+                    class="io.jmix.datatoolsui.screen.entityinfo.model.InfoValue"/>
     </data>
 
     <dialogMode forceDialog="true" width="600" height="AUTO" resizable="true"/>
 
     <layout spacing="true">
         <table id="infoTable"
-               dataContainer="paramsDc"
+               dataContainer="infoDc"
                columnControlVisible="false"
                reorderingAllowed="false"
                sortable="false"
@@ -34,8 +34,8 @@
                width="100%"
                height="250px">
             <columns>
-                <column id="key" caption="msg://systemInfo.name"/>
-                <column id="value" caption="msg://systemInfo.value"/>
+                <column id="key" caption="msg://entityInfo.name"/>
+                <column id="value" caption="msg://entityInfo.value"/>
             </columns>
         </table>
         <hbox id="buttonsPanel" spacing="true">
