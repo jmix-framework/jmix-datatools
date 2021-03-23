@@ -35,7 +35,7 @@ import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.*;
 import io.jmix.ui.model.impl.NoopDataContext;
-import io.jmix.ui.property.UiComponentsProperties;
+import io.jmix.ui.UiComponentsProperties;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
