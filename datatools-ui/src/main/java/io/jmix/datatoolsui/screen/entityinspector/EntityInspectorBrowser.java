@@ -48,7 +48,7 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.navigation.Route;
-import io.jmix.ui.UiComponentsProperties;
+import io.jmix.ui.UiComponentProperties;
 import io.jmix.ui.screen.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +94,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     @Autowired
     protected UiProperties uiProperties;
     @Autowired
-    protected UiComponentsProperties componentsProperties;
+    protected UiComponentProperties componentProperties;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -421,7 +421,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         createAction.setTarget(table);
         createAction.setScreenClass(EntityInspectorEditor.class);
         createAction.setNewEntitySupplier(() -> metadata.create(selectedMeta));
-        createAction.setShortcut(componentsProperties.getTableInsertShortcut());
+        createAction.setShortcut(componentProperties.getTableInsertShortcut());
         return createAction;
     }
 
@@ -430,7 +430,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         editAction.setOpenMode(OpenMode.THIS_TAB);
         editAction.setTarget(table);
         editAction.setScreenClass(EntityInspectorEditor.class);
-        editAction.setShortcut(componentsProperties.getTableInsertShortcut());
+        editAction.setShortcut(componentProperties.getTableInsertShortcut());
         return editAction;
     }
 
